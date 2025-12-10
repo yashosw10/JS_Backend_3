@@ -1,0 +1,17 @@
+{
+  "name": "yasho_bcknd_3",
+  "version": "1.0.0",
+  "description": "the actual project",
+  "keywords": [
+    "youtube",
+    "user",
+    "clone"
+  ],
+  "license": "ISC",
+  "author": "yashowardhan",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
