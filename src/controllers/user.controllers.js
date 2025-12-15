@@ -1,3 +1,5 @@
+// BEFORE WRITING CONTROLLER, TRY MAKING A RAW-MAP OF STEPS 
+
 import {asyncHandler} from "../utils/asyncHandler.js";
 import {ApiError} from "../utils/ApiError.js"
 import { User } from "../models/user.models.js"
