@@ -1,5 +1,5 @@
 import mongoose, {Schema} from "mongoose"
-import { JsonWebTokenError } from "jsonwebtoken"
+import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs"
 
 const userSchema = new Schema(
@@ -30,13 +30,15 @@ const userSchema = new Schema(
             type: String, //cloudinary url
             required: true
         },
-        coverInage:{
+        coverImage:{
             type: String,
         },
-        watchHistory:{
+        watchHistory:[
+            {
             type: Schema.Types.ObjectId,
             ref: "Video"
-        },
+        }
+        ],
         password:{
             type: String,
             required: [true, "Password is required"]
@@ -51,12 +53,10 @@ const userSchema = new Schema(
 )
 
 
-userSchema.pre("save", async function(next) {
-    if(! this.isModified("password")) return next();
-
+userSchema.pre("save", async function() {
+    if(!this.isModified("password")) return ;
 
     this.password = await bcrypt.hash(this.password, 10)
-    next()
 })
 
 userSchema.methods.isPasswordCorrect = async function(password)
@@ -66,7 +66,7 @@ userSchema.methods.isPasswordCorrect = async function(password)
 
 userSchema.methods.generateAccessToken = function(){
     return jwt.sign({
-        _id:this.id,
+        _id:this._id,
         email: this.email,
         username: this.username,
         fullname:this.fullname

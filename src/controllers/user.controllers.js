@@ -3,7 +3,7 @@ import {ApiError} from "../utils/ApiError.js"
 import { User } from "../models/user.models.js"
 import { uploadOnCloudinary } from "../utils/cloudinary.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
-export { ApiResponse } from "../utils/ApiResponse.js"
+
 
 
 const registerUser = asyncHandler(async (req, res)=>{
@@ -18,7 +18,7 @@ const registerUser = asyncHandler(async (req, res)=>{
     // return res
 
     const {fullname, email, username, password } = req.body
-    console.log("email: ", email);
+    //console.log("email: ", email);
 
     // Applying check whether the required fields are empty or not 
     if (
@@ -28,7 +28,7 @@ const registerUser = asyncHandler(async (req, res)=>{
     }
 
     //finding the username or email from db
-    User.findOne({
+    const existedUser = await User.findOne({
         $or:[{ username },{ email }]
     })
 
@@ -36,6 +36,7 @@ const registerUser = asyncHandler(async (req, res)=>{
     if (existedUser) {
         throw new ApiError(409,"User with email or username already exist")
     }
+    console.log(req.files);
 
     //Handling Images
     const avatarLocalPath = req.files?.avatar[0]?.path;
