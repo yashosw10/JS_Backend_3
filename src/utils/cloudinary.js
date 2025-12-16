@@ -1,52 +1,63 @@
-import {v2 as cloudinary} from "cloudinary"
+// Cloudinary ka v2 version import kar rahe hain
+// v2 as cloudinary likhne se modern API access milta hai
+import { v2 as cloudinary } from "cloudinary";
+
+// Node.js ka file system module
+// Local server se files delete karne ke kaam aata hai
 import fs from "fs";
 
-cloudinary.config({ 
-        cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
-        api_key: process.env.CLOUDINARY_API_KEY, 
-        api_secret: process.env.CLOUDINARY_API_SECRET 
-    });
 
-    // Async function to upload a file to Cloudinary
-// localFilePath → path of the file stored temporarily on the server
+// 🔹 Cloudinary configuration
+// Credentials environment variables se aa rahe hain (secure approach)
+cloudinary.config({ 
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME, // Cloudinary account name
+    api_key: process.env.CLOUDINARY_API_KEY,       // Public API key
+    api_secret: process.env.CLOUDINARY_API_SECRET  // Secret key (kabhi expose nahi karni)
+});
+
+
+// 🔹 Async function to upload file on Cloudinary
+// localFilePath = wo path jahan multer ne file temporarily save ki hoti hai
 const uploadOnCloudinary = async (localFilePath) => {
     try {
-        // If no file path is provided, exit early
-        // Prevents unnecessary Cloudinary API calls
-        if (!localFilePath) return null
+        // Agar file path hi nahi mila
+        // to direct null return kar do
+        if (!localFilePath) return null;
 
-        // Upload the file to Cloudinary
-        // resource_type: "auto" allows Cloudinary to detect
-        // the file type automatically (image, video, pdf, etc.)
-        const response = await cloudinary.uploader.upload(localFilePath, { // Study UploadTypes on cloudinary
-            resource_type: "auto"
-        })
+        // Cloudinary pe file upload kar rahe hain
+        // resource_type: "auto" → Cloudinary khud detect karega
+        // image / video / pdf / raw file
+        const response = await cloudinary.uploader.upload(
+            localFilePath,
+            {
+                resource_type: "auto"
+            }
+        );
 
-        // If upload is successful, Cloudinary returns a response object
-        // response contains:
-        // - response.url        → public URL of uploaded file
-        // - response.public_id  → unique Cloudinary file ID
-        // - response.secure_url → HTTPS version of the URL
-        // - response.resource_type → image/video/raw
+        // Upload successful hone ke baad
+        // local server se file delete kar dete hain
+        // Taaki disk space waste na ho
+        fs.unlinkSync(localFilePath);
 
-        // Delete the file from local storage after successful upload
-        // This prevents unnecessary disk usage on the server
-        fs.unlinkSync(localFilePath)
-
-        // Return the Cloudinary response so it can be saved in DB
+        // Cloudinary ka response return kar rahe hain
+        // Isme URL, public_id, secure_url, etc hota hai
         return response;
 
     } catch (error) {
 
-        // If an error occurs during upload:
-        // Remove the locally saved temporary file
-        // This ensures no orphan files remain on the server
-        fs.unlinkSync(localFilePath)
+        // Agar upload ke time error aaya
+        // tab bhi local file delete karni zaroori hai
+        if (localFilePath) {
+            fs.unlinkSync(localFilePath);
+        }
 
-        // Return null to indicate upload failure
-        // Controller can handle this gracefully
+        // Upload fail hone par null return kar dete hain
+        // Controller isko handle karega
         return null;
     }
-}
-    
+};
+
+
+// Function ko export kar rahe hain
+// Taaki controllers me use ho sake
 export { uploadOnCloudinary };

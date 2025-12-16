@@ -1,10 +1,25 @@
+// asyncHandler ek higher-order function hai
+// Matlab: ye ek function leta hai aur ek naya function return karta hai
 const asyncHandler = (requestHandler) => {
-    return (req, res, next) => {
-        Promise.resolve(requestHandler(req, res, next)).catch((err) => next(err))
-    }
-}
 
-export {asyncHandler};
+    // Ye function Express route handler hota hai
+    return (req, res, next) => {
+
+        // Promise.resolve() ensure karta hai ki:
+        // - async function ho ya normal function
+        // - dono ko promise ki tarah handle kiya ja sake
+        Promise
+            .resolve(requestHandler(req, res, next))
+
+            // Agar requestHandler ke andar koi error aaya
+            // to wo catch block me aa jayega
+            .catch((err) => next(err)); // Error ko Express ke error middleware ko bhej dete hain
+    };
+};
+
+// asyncHandler ko export kar rahe hain
+export { asyncHandler };
+
 
 
 
