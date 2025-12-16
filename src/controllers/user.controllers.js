@@ -1,5 +1,3 @@
-// BEFORE WRITING CONTROLLER, TRY MAKING A RAW-MAP OF STEPS 
-
 import {asyncHandler} from "../utils/asyncHandler.js";
 import {ApiError} from "../utils/ApiError.js"
 import { User } from "../models/user.models.js"
@@ -225,11 +223,6 @@ const refreshAccessToken = asyncHandler(async (req,res) =>
 export {
     registerUser,
     loginUser,
-<<<<<<< HEAD
     logoutUser,
     refreshAccessToken
 };
-=======
-    logoutUser
-};
->>>>>>> b15f64c229a88d1baa197a8986bc18b3236dc523
