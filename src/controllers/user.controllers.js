@@ -222,7 +222,7 @@ const refreshAccessToken = asyncHandler(async (req,res) =>
 
 const changeCurrentPassword = asyncHandler(async (req,res)=>
 {
-    const {oldPassword, newPassword, confirmPassword} = req.body
+    const {oldPassword, newPassword} = req.body
 
     //confirmPassword // if(!(newPassword === confirmPassword))
 
